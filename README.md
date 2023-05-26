@@ -11,6 +11,33 @@
 - dotenv
 - express
 
+## How to Run
+- clone the repo
+- Install dependencies
+```
+npm install
+```
+- Generate credentials from Google Developers Console
+- Redirect URI
+```
+https://developers.google.com/oauthplayground
+```
+- Enable API services -> Activate Gmail API
+- For access token
+```
+https://developers.google.com
+```
+- Authorise API link
+```
+https://mail.google.com
+```
+- In settings, fill Client ID and Clinet secret
+- Exchange Authorization Code for Access Token
+- After creating .env file, in terminal use
+```
+node test.js
+```
+
 ### Features
 1. The app check for new emails in a given Gmail ID
 2. The app send replies to Emails that have no prior replies
