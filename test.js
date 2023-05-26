@@ -1,9 +1,8 @@
+const fs = require("fs");
 const express = require("express");
 const app = express();
-
 const { google } = require("googleapis");
-const fs = require("fs");
-// const { OAuth2Client } = google.auth;
+
 require("dotenv").config();
 
 const oAuth2Client = new google.auth.OAuth2(
@@ -16,6 +15,7 @@ oAuth2Client.setCredentials({ refresh_token: process.env.refresh_token });
 
 const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
 
+// ---->>>>> Fetch and Reply <<<<<-----
 async function fetchAndReplyToEmails() {
   let repliedThreads = [];
   try {
@@ -109,20 +109,17 @@ async function fetchAndReplyToEmails() {
   }
 }
 
+// ---->>>>> Check Whether label Exist <<<<<-----
 async function labelExists(labelName = "Replied") {
   const res = await gmail.users.labels.list({ userId: "me" });
   let labels = res.data.labels;
-  //console.log(labels);
   for (let label of labels) {
-    //console.log(label.name);
     if (label.name === labelName) {
       return label;
     }
   }
   return false;
 }
-
-//labelExists();
 
 function getHeaderValue(headers, name) {
   const header = headers.find(
@@ -132,10 +129,6 @@ function getHeaderValue(headers, name) {
 }
 
 function createReplyMessage(email) {
-  // const reply = {
-  //   raw: '',
-  //   threadId: email.threadId
-  // };
 
   const headers = email.payload.headers;
   const subject = getHeaderValue(headers, "Subject");
@@ -154,11 +147,11 @@ function createReplyMessage(email) {
   ).toString("base64")}`;
 }
 
-// Interval between 45 to 120 seconds-----------------------------------------
+// >>>> Interval between 45 to 120 seconds <<<<<
 const interval = Math.floor(Math.random() * (120 - 45 + 1) + 45) * 1000;
 
-// Call the fetchAndReplyToEmails function initially---------------------------
+// >>>> Call the fetchAndReplyToEmails function initially <<<<
 fetchAndReplyToEmails().catch(console.error);
 
-// Schedule the next executions at regular intervals
+// >>>> Schedule the next executions at regular intervals <<<<
 setInterval(fetchAndReplyToEmails, interval);
